@@ -15,9 +15,12 @@ import {
   useStyles,
 } from "./useStyles";
 
+const TOOLTIP_LANGUAGE = "Allow access to microphone";
+
 const SpeechRecognitionTextGenerator: React.FC = () => {
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [blocked, setBlocked] = useState<boolean>(false);
+
   const {
     transcribe: transcript,
     isListening,
@@ -27,29 +30,40 @@ const SpeechRecognitionTextGenerator: React.FC = () => {
 
   useEffect(() => {
     async function getPermission() {
-      const permissionName = "microphone" as PermissionName;
-      const request = await navigator.permissions.query({
-        name: permissionName,
+      const permissionStatus = await navigator.permissions.query({
+        name: "microphone" as PermissionName,
       });
-      if (request.state === "prompt" || request.state === "denied") {
-        setBlocked(true);
-      }
+
+      setBlocked(permissionStatus.state === "denied");
     }
 
-    !blocked && getPermission();
-  }, [blocked]);
+    getPermission();
+  }, [isListening]);
 
   async function handleListening() {
-    const permissionName = "microphone" as PermissionName;
-    const request = await navigator.permissions.query({ name: permissionName });
+    const permissionStatus = await navigator.permissions.query({
+      name: "microphone" as PermissionName,
+    });
 
-    if (request.state === "denied") {
-      setShowAlert(true);
-      setBlocked(true);
-    } else {
+    if (permissionStatus.state === "granted") {
+      toggleListening(!isListening);
       setBlocked(false);
-      toggleListening();
+    } else if (permissionStatus.state === "prompt") {
+      toggleListening(true);
+      setBlocked(true);
     }
+
+    permissionStatus.onchange = () => {
+      if (permissionStatus.state === "denied") {
+        setShowAlert(true);
+        setBlocked(true);
+        toggleListening(false);
+      } else if (permissionStatus.state === "granted") {
+        setBlocked(false);
+        setShowAlert(false);
+        toggleListening(true);
+      }
+    };
   }
 
   return (
@@ -69,7 +83,7 @@ const SpeechRecognitionTextGenerator: React.FC = () => {
         </Alert>
       )}
       <Box className={classes.textContainer}>
-        {transcript ? (
+        {transcript && isListening ? (
           <TranscriptText>{transcript}</TranscriptText>
         ) : (
           <PlaceholderText>
@@ -82,6 +96,7 @@ const SpeechRecognitionTextGenerator: React.FC = () => {
           Press here to {isListening && !blocked ? "stop" : "start"}
         </InstructionText>
         <RippleButton
+          title={blocked ? TOOLTIP_LANGUAGE : ""}
           sx={buttonStyle}
           color="primary"
           onClick={handleListening}
@@ -90,6 +105,7 @@ const SpeechRecognitionTextGenerator: React.FC = () => {
         >
           {blocked && (
             <Badge
+              title={TOOLTIP_LANGUAGE}
               className={classes.disabledBadge}
               color="warning"
               overlap="circular"

@@ -56,7 +56,7 @@ const RippleButton = styled(IconButton)(
     padding: "10px 20px",
     fontSize: "16px",
     backgroundColor:
-      disable === "true" ? "#e2e2e2 !important" : theme?.palette.secondary.main,
+      disable === "true" ? "#b4b4b4 !important" : theme?.palette.secondary.main,
     color: "#000",
     border: "none",
     cursor: "pointer",

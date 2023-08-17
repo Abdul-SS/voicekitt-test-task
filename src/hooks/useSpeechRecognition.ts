@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 type ReturnType = {
   isListening: boolean;
   transcribe: string;
-  toggleListening: () => void;
+  toggleListening: (isListen: boolean) => void;
 };
 
 type SpeechRecognitionResult = {
@@ -24,18 +24,17 @@ function useSpeechRecognition(): ReturnType {
 
   async function checkMicrophonePermission() {
     try {
-      const permissionName = "microphone" as PermissionName;
       await navigator.permissions.query({
-        name: permissionName,
+        name: "microphone" as PermissionName,
       });
     } catch (error) {
       console.error("Error checking microphone permission:", error);
     }
   }
 
-  const toggleListening = () => {
+  const toggleListening = (isListen: boolean) => {
     setTranscribe("");
-    setIsListening(!isListening);
+    setIsListening(isListen);
   };
 
   useEffect(() => {
