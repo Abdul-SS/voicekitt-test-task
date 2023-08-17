@@ -87,6 +87,9 @@ const RippleButton = styled(IconButton)(
         opacity: 0,
       },
     },
+    ":focus": {
+      outline: 0,
+    },
     ":hover": {
       "::before": {
         opacity: 1,
