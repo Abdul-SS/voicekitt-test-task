@@ -40,13 +40,23 @@ const SpeechControlsContainer = styled(Box)({
 });
 
 const RippleButton = styled(IconButton)(
-  ({ theme, rippleeffect }: { theme?: Theme; rippleeffect: string }) => ({
+  ({
+    theme,
+    rippleeffect,
+    disable,
+  }: {
+    theme?: Theme;
+    rippleeffect: string;
+    disable: string;
+  }) => ({
     [theme ? theme?.breakpoints.down("sm") : ""]: {
       fontSize: 14,
     },
+    PointerEvent: disable === "true" ? "none !important" : "auto",
     padding: "10px 20px",
     fontSize: "16px",
-    backgroundColor: theme?.palette.secondary.main,
+    backgroundColor:
+      disable === "true" ? "#e2e2e2 !important" : theme?.palette.secondary.main,
     color: "#000",
     border: "none",
     cursor: "pointer",
@@ -63,9 +73,11 @@ const RippleButton = styled(IconButton)(
       border: "3px solid rgba(95, 9, 175, 0.5)",
       borderRadius: "50%",
       PointerEvent: "none",
-      transition: rippleeffect === 'true' ? "opacity 0.2s ease-in-out" : "",
-      WebkitAnimation: rippleeffect === 'true' ? "ripple 1s infinite ease-in-out" : "",
-      animation: rippleeffect === 'true' ? "ripple 1s infinite ease-in-out" : "",
+      transition: rippleeffect === "true" ? "opacity 0.2s ease-in-out" : "",
+      WebkitAnimation:
+        rippleeffect === "true" ? "ripple 1s infinite ease-in-out" : "",
+      animation:
+        rippleeffect === "true" ? "ripple 1s infinite ease-in-out" : "",
     },
     "@keyframes ripple": {
       "0%": {
@@ -109,6 +121,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     [theme.breakpoints.down("sm")]: {
       paddingLeft: 10,
     },
+  },
+  disabledBadge: {
+    top: -20,
+    right: -30,
   },
 }));
 

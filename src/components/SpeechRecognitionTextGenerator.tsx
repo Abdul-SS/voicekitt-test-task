@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Box, Stack } from "@mui/material";
+import { Alert, Box, Stack, Badge } from "@mui/material";
 import { Mic, Stop } from "@mui/icons-material";
 
 import useSpeechRecognition from "../hooks/useSpeechRecognition";
@@ -85,8 +85,17 @@ const SpeechRecognitionTextGenerator: React.FC = () => {
           sx={buttonStyle}
           color="primary"
           onClick={handleListening}
+          disable={blocked.toString()}
           rippleeffect={(isListening && !blocked).toString()}
         >
+          {blocked && (
+            <Badge
+              className={classes.disabledBadge}
+              color="warning"
+              overlap="circular"
+              badgeContent="!"
+            />
+          )}
           {isListening && !blocked ? <Stop /> : <Mic />}
         </RippleButton>
       </SpeechControlsContainer>
