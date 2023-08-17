@@ -40,7 +40,7 @@ const SpeechControlsContainer = styled(Box)({
 });
 
 const RippleButton = styled(IconButton)(
-  ({ theme, rippleeffect }: { theme?: Theme; rippleeffect: boolean }) => ({
+  ({ theme, rippleeffect }: { theme?: Theme; rippleeffect: string }) => ({
     [theme ? theme?.breakpoints.down("sm") : ""]: {
       fontSize: 14,
     },
@@ -63,9 +63,9 @@ const RippleButton = styled(IconButton)(
       border: "3px solid rgba(95, 9, 175, 0.5)",
       borderRadius: "50%",
       PointerEvent: "none",
-      transition: rippleeffect ? "opacity 0.2s ease-in-out" : "",
-      WebkitAnimation: rippleeffect ? "ripple 1s infinite ease-in-out" : "",
-      animation: rippleeffect ? "ripple 1s infinite ease-in-out" : "",
+      transition: rippleeffect === 'true' ? "opacity 0.2s ease-in-out" : "",
+      WebkitAnimation: rippleeffect === 'true' ? "ripple 1s infinite ease-in-out" : "",
+      animation: rippleeffect === 'true' ? "ripple 1s infinite ease-in-out" : "",
     },
     "@keyframes ripple": {
       "0%": {

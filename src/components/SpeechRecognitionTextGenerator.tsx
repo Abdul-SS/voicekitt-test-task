@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Box, Stack } from "@mui/material";
 import { Mic, Stop } from "@mui/icons-material";
 
@@ -17,6 +17,7 @@ import {
 
 const SpeechRecognitionTextGenerator: React.FC = () => {
   const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [blocked, setBlocked] = useState<boolean>(false);
   const {
     transcribe: transcript,
     isListening,
@@ -24,13 +25,29 @@ const SpeechRecognitionTextGenerator: React.FC = () => {
   } = useSpeechRecognition();
   const classes = useStyles();
 
+  useEffect(() => {
+    async function getPermission() {
+      const permissionName = "microphone" as PermissionName;
+      const request = await navigator.permissions.query({
+        name: permissionName,
+      });
+      if (request.state === "prompt" || request.state === "denied") {
+        setBlocked(true);
+      }
+    }
+
+    !blocked && getPermission();
+  }, [blocked]);
+
   async function handleListening() {
     const permissionName = "microphone" as PermissionName;
     const request = await navigator.permissions.query({ name: permissionName });
 
     if (request.state === "denied") {
       setShowAlert(true);
+      setBlocked(true);
     } else {
+      setBlocked(false);
       toggleListening();
     }
   }
@@ -62,15 +79,15 @@ const SpeechRecognitionTextGenerator: React.FC = () => {
       </Box>
       <SpeechControlsContainer>
         <InstructionText>
-          Press here to {isListening ? "stop" : "start"}
+          Press here to {isListening && !blocked ? "stop" : "start"}
         </InstructionText>
         <RippleButton
           sx={buttonStyle}
           color="primary"
           onClick={handleListening}
-          rippleeffect={isListening}
+          rippleeffect={(isListening && !blocked).toString()}
         >
-          {isListening ? <Stop /> : <Mic />}
+          {isListening && !blocked ? <Stop /> : <Mic />}
         </RippleButton>
       </SpeechControlsContainer>
     </Stack>
